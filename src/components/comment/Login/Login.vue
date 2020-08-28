@@ -53,7 +53,7 @@ export default {
                const {data:res}=await this.$http.post('/login',this.form)
                if(res.meta.status!==200) this.$message("登录失败")
                else this.$message("登录成功")
-               console.log(res)
+               
             //    在sessionStorage中保存返回的token
                window.sessionStorage.setItem('token',res.data.token)
             //    跳转到home路由组件
