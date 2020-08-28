@@ -6,16 +6,16 @@
               <img src="../../../assets/logo.png" alt="">
           </div>
             <!-- 登录的表单 -->
-            <el-form label-width="0px" class="login-form" v-model="form">
-                <el-form-item>
+            <el-form label-width="0px" ref="loginRef" class="login-form" :model="form" :rules="loginRules">
+                <el-form-item prop="username">
                     <el-input prefix-icon="iconfont icon-yonghu" v-model="form.username"></el-input>
                 </el-form-item>
-                <el-form-item>
+                <el-form-item prop="password">
                     <el-input prefix-icon="iconfont icon-mima" v-model="form.password" type="password"></el-input>
                 </el-form-item>
                 <el-form-item class="login-botton">
-                    <el-button type="primary" disabled>登录</el-button>
-                    <el-button  type="info" disabled>重置</el-button>
+                    <el-button type="primary" @click="login">登录</el-button>
+                    <el-button  type="info" @click="loginReset">重置</el-button>
                 </el-form-item>
             </el-form>
       </div>
@@ -27,11 +27,42 @@ export default {
     data(){
         return{
             form:{
-                username:'1',
-                password:'1'
+                username:'admin',
+                password:'123456'
+            },
+            loginRules:{
+                username: [
+                    { required: true, message: '请输入用户名称', trigger: 'blur' },
+                    { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
+                ],
+            password: [
+                { required: true, message: '请输入密码', trigger: 'blur' },
+                { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
+                ]
             }
         }
-    }
+    },
+    methods: {
+        loginReset(){
+            this.$refs.loginRef.resetFields()
+        },
+         login(){
+            this.$refs.loginRef.validate(async success=>{
+                // console.log(success)
+                if(!success)return
+               const {data:res}=await this.$http.post('/login',this.form)
+               if(res.meta.status!==200) this.$message("登录失败")
+               else this.$message("登录成功")
+               console.log(res)
+            //    在sessionStorage中保存返回的token
+               window.sessionStorage.setItem('token',res.data.token)
+            //    跳转到home路由组件
+            this.$router.push('/home')
+
+
+            })
+        }
+    },
 }
 </script>
 
