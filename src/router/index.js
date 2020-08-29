@@ -11,6 +11,13 @@ const WelCome = () =>
 const User = () =>
     import ('../views/Home/Childrens/User')
 
+// 权限列表
+const Rights = () =>
+    import ('../views/Power/Rights')
+    // 角色列表
+const Roles = () =>
+    import ('../views/Power/Roles')
+
 
 
 Vue.use(VueRouter)
@@ -31,7 +38,9 @@ const routes = [{
                 path: '/Welcome',
                 component: WelCome,
             },
-            { path: '/users', component: User }
+            { path: '/users', component: User },
+            { path: '/rights', component: Rights },
+            { path: '/roles', component: Roles }
 
         ]
 
