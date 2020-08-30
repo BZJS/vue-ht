@@ -63,8 +63,8 @@
             
               <!-- 文字提示 -->
               <!-- 这里出现一个错误那就是更改width后这里的三个按钮没有实现一行,这里是有div的包裹的原因 -->
-              <el-tooltip class="item" effect="dark" content="分配角色" placement="top-start">
-                <el-button type="warning" icon="el-icon-setting" size="mini"></el-button>
+              <el-tooltip class="item" effect="dark" content="分配角色" placement="top-start" >
+                <el-button type="warning" icon="el-icon-setting" size="mini" @click="roleMan(scope.row)"></el-button>
               </el-tooltip>
             
             
@@ -137,6 +137,30 @@
       </span>
   </el-dialog>
 
+<!-- 用户列表分配角色按钮的对话框 -->
+    <el-dialog
+      title="分配"
+      :visible.sync="roleDialog"
+      width="50%"
+      >
+      <div>
+        <p>{{userRole.username}}</p>
+        <p>{{userRole.role_name}}</p>
+        <!-- select组件 -->
+        <el-select v-model="selectId" placeholder="请选择">
+          <el-option
+            v-for="item in manList"
+            :key="item.id"
+            :label="item.roleName"
+            :value="item.id">
+          </el-option>
+        </el-select>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="roleDialog = false">取 消</el-button>
+        <el-button type="primary" @click="saveRole">确 定</el-button>
+      </span>
+    </el-dialog>
     </el-card>
 
     
@@ -197,10 +221,10 @@ export default {
                 { min: 5, max: 10, message: '长度在 5 到 10 个字符', trigger: 'blur' }
               ],
               mobile:[
-                { validator: checkEmail, trigger: 'blur' }
+                { validator: checkPhone, trigger: 'blur' }
               ],
               mobel:[
-                 { validator: checkPhone, trigger: 'blur' }
+                 { validator: checkEmail, trigger: 'blur' }
               ]
             },
             // 控制修改用户的对话框
@@ -221,7 +245,15 @@ export default {
                  { required: true, message: '手机号', trigger: 'blur' },
                  { validator: checkPhone, trigger: 'blur' }
               ]
-            }
+            },
+            // 控制用户角色分配按钮的对话框控制
+            roleDialog:false,
+            // 角色分配按钮对话框的数据
+            manList:[],
+            // 储存当点击角色分配按钮时的用户
+            userRole:{},
+            // 分配角色按钮对话框中的selete组件选中状态的ID
+            selectId:0
 
         }
     },
@@ -337,8 +369,38 @@ export default {
         this.getUser()
         
 
-      }
-        
+    },
+      // 分配角色按钮的点击事件
+       async roleMan(role){
+        //  存储当前用户信息
+        this.userRole=role
+          // 获取角色列表的数据
+          const {data:res}=await this.$http.get('roles')
+          if(res.meta.status!==200)return this.$message("获取信息失败")
+          this.manList=res.data
+          this.$message.success("获取信息成功")
+          this.roleDialog=true
+
+        },
+        // 这里是有问题的,在修改确定之后,无法修改
+        // 点击确认修改角色信息
+        async saveRole(){
+          // 判断是否选中角色信息
+          if(!this.selectId){
+            return this.$message("请输入角色信息")
+
+          }
+          console.log(this.userRole.id)
+          const {data:res}=await this.$http.put(`users/${this.userRole.id}/role`,{rid:this.selectId})
+          console.log(res)
+          if(res.meta.status!==200){
+            return this.$message("修改失败")
+          }
+          this.$message("修改成功")
+          this.getUser()
+          this.roleDialog=false
+
+        }
 
     },
     
