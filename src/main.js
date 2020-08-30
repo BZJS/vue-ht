@@ -2,6 +2,12 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 
+// 引入vue-table-with-tree-grid这个表格包
+import ZkTable from 'vue-table-with-tree-grid'
+// 全局注册
+Vue.component('tree-table', ZkTable)
+
+
 // 引入初始化的css
 import './assets/css/global.css'
 // 注册全局的Element组件

@@ -17,6 +17,9 @@ const Rights = () =>
     // 角色列表
 const Roles = () =>
     import ('../views/Power/Roles')
+    // 商品组件
+const Goods_cate = () =>
+    import ('../views/Goods/Goods_cate')
 
 
 
@@ -40,7 +43,8 @@ const routes = [{
             },
             { path: '/users', component: User },
             { path: '/rights', component: Rights },
-            { path: '/roles', component: Roles }
+            { path: '/roles', component: Roles },
+            { path: '/categories', component: Goods_cate }
 
         ]
 
